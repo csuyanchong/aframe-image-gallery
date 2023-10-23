@@ -6,10 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>360度全景相册</title>
     <script src="./node_modules/aframe/dist/aframe-v1.4.2.min.js"></script>
+    <script src="./node_modules/aframe-template-component/dist/aframe-template-component.js"></script>
+    <script src="./node_modules/aframe-layout-component/dist/aframe-layout-component.js"></script>
+    <script src="./node_modules/aframe-event-set-component/dist/aframe-event-set-component.js"></script>
+    <script src="./node_modules/aframe-proxy-event-component/dist/aframe-proxy-event-component.js"></script>
 
     <script id="plane" type="text/html">
         <a-entity class="link" geometry="primitive: plane; width: 1; height: 1"
-            material="shader: flat; src: ${thumb}" sound="on: click; src: #click-sound"></a-entity>
+            material="shader: flat; src: ${thumb}" 
+            sound="on: click; src: #click-sound" 
+            event-set__mouseenter="scale: 1.2 1.2 1" 
+            event-set__mouseleave="scale: 1 1 1"
+            event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
+            proxy-event="event: click; to: #image-360; as: fade"
+            >
+        </a-entity>
     </script>
 </head>
 
@@ -28,19 +39,33 @@
         </a-assets>
 
         <!-- 360-degree image. -->
-        <a-sky id="image-360" radius="10" src="#city"></a-sky>
+        <a-sky id="image-360" radius="10" src="#city"
+            animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade"
+            animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade">
+        </a-sky>
 
         <!-- Link template we will build. -->
-        <a-entity template="src: #plane;" data-thumb="$city-thumb"></a-entity>
-        <a-entity template="src: #plane" data-thumb="$cubes-thumb"></a-entity>
-        <a-entity template="src: #plane" data-thumb="$sechelt-thumb"></a-entity>
+        <a-entity id="links" layout="type: line; margin: 1.5" position="-3 -1 -4">
+            <a-entity template="src: #plane;" data-src="#city" data-thumb="#city-thumb"></a-entity>
+            <a-entity template="src: #plane" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
+            <a-entity template="src: #plane" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
+        </a-entity>
+
         <!-- Camera + Cursor. -->
-        <a-camera>
-            <a-cursor id="cursor"
+        <a-camera position="0 0 0">
+            <a-cursor id="cursor">
+
+            </a-cursor>
+        </a-camera>
+
+        <!-- <a-camera> -->
+
+        <!-- <a-cursor id="cursor"
                 animation__click="property: scale; from: 0.1 0.1 0.1; to: 1 1 1; easing: easeInCubic; dur: 150; startEvents: click"
                 animation__clickreset="property: scale; to: 0.1 0.1 0.1; dur: 1; startEvents: animationcomplete__click"
-                animation__fusing="property: scale; from: 1 1 1; to: 0.1 0.1 0.1; easing: easeInCubic; dur: 150; startEvents: fusing"></a-cursor>
-        </a-camera>
+                animation__fusing="property: scale; from: 1 1 1; to: 0.1 0.1 0.1; easing: easeInCubic; dur: 150; startEvents: fusing">
+            </a-cursor> -->
+        <!-- </a-camera> -->
     </a-scene>
 </body>
 
